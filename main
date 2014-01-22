@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+using namespace std;
 #include <fstream>
 #include <conio2.h>
 #include <string.h>
-using namespace std;
 
 typedef struct
 {
@@ -12,19 +12,19 @@ typedef struct
     int repeticiones;
 } tipoNumero;
 
-#define OPCIONES 5
+#define OPCIONES 6
 
 /*prototipos*/
 void actLista(tipoNumero[],int);
 void printLista(tipoNumero[],int);
-void printMenu(int,int,string[],int);
 void verLista(tipoNumero[]);
 void numCercanos(tipoNumero[]);
 void guardar(tipoNumero[],int);
 void borrar(tipoNumero[]);
 void zonas(tipoNumero[]);
-int elegirOpcion(int,string[],int);
+int elegirOpcion(int,string[],int,int);
 void leerFichero(tipoNumero[],int);
+int pedirClave();
 
 int main()
 {
@@ -32,15 +32,18 @@ int main()
     tipoNumero lista[37];
     char confirm[7];
     string casinos[]={"Montijo","Badajoz"};
-    string menu[]={"Salir","Numeros cercanos","Lista / introducir numeros","Zona mas repetida","Borrar datos"};
+    string menu[]={"Salir","Numeros cercanos","Lista / introducir numeros","Zona mas repetida","Borrar datos","Cambiar casino"};
 
-    sitio=elegirOpcion(2,casinos,1);
+    opc=pedirClave();
+    if (opc!=1)
+    {
+        sitio=elegirOpcion(2,casinos,1,0);
+        leerFichero(lista,sitio);
+    }
     system("cls");
-    leerFichero(lista,sitio);
-    opc=0;
     while (opc!=1)
     {
-        opc=elegirOpcion(OPCIONES,menu,2);
+        opc=elegirOpcion(OPCIONES,menu,2,sitio);
         system("cls");
         switch(opc)
         {
@@ -68,13 +71,24 @@ int main()
                     if(strcmp(confirm,"BORRAR")==0)     /*strcmp() compara dos cadenas de caracteres y devuelve 0 si son iguales (librería string.h)*/
                     {
                         borrar(lista);
-                        cout<<"Todas las repeticiones han sido puestas a 0";
+                        cout<<"Todas las repeticiones de ";
+                        if (sitio==1)
+                            cout<<"Montijo";
+                        else
+                            cout<<"Badajoz";
+                        cout<<" han sido puestas a 0";
                     }
                     else
                         cout<<"Los numeros permanecen guardados";
                     cout<<endl<<endl;
                     system("PAUSE");
                     break;
+                }
+            case 6:
+                {
+                    sitio=elegirOpcion(2,casinos,1,0);
+                    system("cls");
+                    leerFichero(lista,sitio);
                 }
         }
         guardar(lista,sitio);
@@ -111,16 +125,23 @@ void printLista(tipoNumero lista[],int n)
 }
 
 
-void printMenu(int n,int opc, string m[],int cabecera) /*muestra en pantalla un menú*/
+void printMenu(int n,int opc, string m[],int cabecera,int casino) /*muestra en pantalla un menú*/
 {
     int i;
     system("cls");
     if (cabecera==1)
          cout<<"Elige el casino: "<<endl;
     else
+        if (casino==1)
        {
             cout<<"**********************************"<<endl;
-            cout<<"|\\/\\/\\/\\/\\/\\/  MENU  /\\/\\/\\/\\/\\/\\|"<<endl;
+            cout<<"|\\/\\/\\/\\  Ruleta Montijo  \\/\\/\\/\\|"<<endl;
+            cout<<"**********************************"<<endl;
+       }
+       else
+       {
+            cout<<"**********************************"<<endl;
+            cout<<"|\\/\\/\\/\\  Ruleta Badajoz  \\/\\/\\/\\|"<<endl;
             cout<<"**********************************"<<endl;
        }
     for (i=0;i<opc;i++)
@@ -446,9 +467,9 @@ void leerFichero(tipoNumero lista[], int sitio)  /*Lee los datos del fichero ele
 }
 
 /*prototipo*/
-void printMenu(int,int,string[],int);
+void printMenu(int,int,string[],int,int);
 
-int elegirOpcion(int numOpc,string m[],int cabecera)  /*Cambia de opción dependiendo de si pulsamos la tecla arriba o abajo, devuelve la opción al presionar ENTER*/
+int elegirOpcion(int numOpc,string m[],int cabecera,int casino)  /*Cambia de opción dependiendo de si pulsamos la tecla arriba o abajo, devuelve la opción al presionar ENTER*/
 {
     int opc,tecla;
 
@@ -456,7 +477,7 @@ int elegirOpcion(int numOpc,string m[],int cabecera)  /*Cambia de opción depend
     tecla=0;
     while (tecla!=13)       /*13 es el codigo ASCII para la tecla ENTER*/
     {
-        printMenu(opc,numOpc,m,cabecera);
+        printMenu(opc,numOpc,m,cabecera,casino);
         tecla=getch();
         if (tecla==72)           /*72 es el codigo ASCII para la tecla de direccion arriba*/
         {
@@ -474,4 +495,33 @@ int elegirOpcion(int numOpc,string m[],int cabecera)  /*Cambia de opción depend
         }
     }
     return opc;
+}
+
+int pedirClave() /*pide una contraseña y en caso de ser erronea vuelve a pedirla*/
+{
+    int clave,i;
+
+    i=0;
+    cout<<"Introduzca la clave para poder abrir el programa"<<endl;
+	cin>>clave;
+	if (clave!=55555)
+        while (clave!=55555 && i<3)
+        {
+            system("cls");
+            textcolor(RED);
+            cout<<"Clave incorrecta, no intente robar el programa!!"<<endl;
+            textcolor(WHITE);
+            cout<<"Te quedan "<<3-i<<" intentos: ";
+            cin>>clave;
+            i++;
+        }
+	if (clave==55555)
+        return 0;
+    else
+    {
+        system("cls");
+        cout<<"No te quedan mas intentos, el programa va a cerrarse"<<endl<<endl;
+        system("PAUSE");
+        return 1;
+    }
 }
