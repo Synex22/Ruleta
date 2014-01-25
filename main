@@ -3,7 +3,9 @@
 #include <iostream>
 using namespace std;
 #include <fstream>
+#include <windows.h>   /*no funciona en la version movil*/
 #include <conio2.h>
+//#include <conio.h>
 #include <string.h>
 
 typedef struct
@@ -25,6 +27,8 @@ void zonas(tipoNumero[]);
 int elegirOpcion(int,string[],int,int);
 void leerFichero(tipoNumero[],int);
 int pedirClave();
+void ocultarCursor(bool);    /*no funciona para version movil*/
+//void borrarPantalla();
 
 int main()
 {
@@ -34,6 +38,7 @@ int main()
     string casinos[]={"Montijo","Badajoz"};
     string menu[]={"Salir","Numeros cercanos","Lista / introducir numeros","Zona mas repetida","Borrar datos","Cambiar casino"};
 
+    ocultarCursor(false);    /*no funciona para version movil*/
     opc=pedirClave();
     if (opc!=1)
     {
@@ -41,10 +46,12 @@ int main()
         leerFichero(lista,sitio);
     }
     system("cls");
+    //borrarPantalla();
     while (opc!=1)
     {
         opc=elegirOpcion(OPCIONES,menu,2,sitio);
         system("cls");
+        //borrarPantalla();
         switch(opc)
         {
             case 2:
@@ -81,13 +88,16 @@ int main()
                     else
                         cout<<"Los numeros permanecen guardados";
                     cout<<endl<<endl;
+                    ocultarCursor(true);    /*no funciona para version movil*/
                     system("PAUSE");
+                    ocultarCursor(false);    /*no funciona para version movil*/
                     break;
                 }
             case 6:
                 {
                     sitio=elegirOpcion(2,casinos,1,0);
                     system("cls");
+                    //borrarPantalla();
                     leerFichero(lista,sitio);
                 }
         }
@@ -124,11 +134,13 @@ void printLista(tipoNumero lista[],int n)
             printf("Numero: %2d -------------- %2d veces\n",lista[i].numero,lista[i].repeticiones);
 }
 
+//void borrarPantalla();
 
 void printMenu(int n,int opc, string m[],int cabecera,int casino) /*muestra en pantalla un menú*/
 {
     int i;
     system("cls");
+    //borrarPantalla();
     if (cabecera==1)
          cout<<"Elige el casino: "<<endl;
     else
@@ -148,12 +160,13 @@ void printMenu(int n,int opc, string m[],int cabecera,int casino) /*muestra en p
     {
         if (i+1==n)
         {
-            textbackground(WHITE);
-            textcolor(BLACK);
+            textbackground(WHITE);      /*no funciona version movil*/
+            textcolor(BLACK);             /*no funciona version movil*/
+            //cout<<">>";
         }
-        cout<<endl<<"- "<<m[i]<<endl;
-        textbackground(BLACK);
-        textcolor(WHITE);
+        cout<<"- "<<m[i]<<endl<<endl;
+        textbackground(BLACK);         /*no funciona version movil*/
+        textcolor(WHITE);                    /*no funciona version movil*/
 
     }
 }
@@ -161,6 +174,7 @@ void printMenu(int n,int opc, string m[],int cabecera,int casino) /*muestra en p
 /*prototipos*/
 int entradaNum();
 int sumaZona(tipoNumero[],int,int);
+//void borrarPantalla();
 
 void verLista(tipoNumero lista[])   /*Muestra una lista ordenada segun las repeticiones y permite la introduccion de nuevos numeros*/
 {
@@ -176,6 +190,7 @@ void verLista(tipoNumero lista[])   /*Muestra una lista ordenada segun las repet
     do
    {
         system("cls");
+        //borrarPantalla();
         printLista(lista,n);
         cout<<endl<<"Hay "<<sumaZona(lista,37,0)<<" numeros almacenados"<<endl<<endl;
         printf("Para dejar de introducir numeros pulsa ESCAPE\n");
@@ -195,6 +210,7 @@ void verLista(tipoNumero lista[])   /*Muestra una lista ordenada segun las repet
 int buscarPosList(tipoNumero[],int);
 int buscarPosOrd(int);
 int sumaZona(tipoNumero[],int,int);
+void ocultarCursor(bool);   /*no funciona para version movil*/
 
 void numCercanos(tipoNumero lista[])   /*Muestra x numeros ordenados cercanos a un numero n*/
 {
@@ -252,7 +268,9 @@ void numCercanos(tipoNumero lista[])   /*Muestra x numeros ordenados cercanos a 
         }
         cout<<endl<<"Esta zona suma "<<sumaZona(lista,cant*2+1,buscarPosList(lista,n)+1)<<" repeticiones"<<endl;
         printf("\nPresiona una tecla para seguir o ESCAPE para salir\n");
+        ocultarCursor(true);   /*no funciona para version movil*/
         seguir=getch();
+        ocultarCursor(false);  /*no funciona para version movil*/
         cout<<endl;
     }
 }
@@ -328,7 +346,9 @@ void zonas(tipoNumero lista[]) /*Muestra la zona de numeros que suma mas repetic
         else
             printf("Numero: %2d -------------- %2d veces\n",lista[buscarPosList(lista,buscarNumOrd(pos+i))].numero,lista[buscarPosList(lista,buscarNumOrd(pos+i))].repeticiones);
     }
+    ocultarCursor(true);   /*no funciona para version movil*/
     system("PAUSE");
+    ocultarCursor(false);   /*no funciona para version movil*/
 }
 
 /*prototipo*/
@@ -456,7 +476,9 @@ void leerFichero(tipoNumero lista[], int sitio)  /*Lee los datos del fichero ele
             lectura.open("lista.txt");
         else
             lectura.open("lista2.txt");
+        ocultarCursor(true);    /*no funciona para version movil*/
         system("PAUSE");
+        ocultarCursor(false);   /*no funciona para version movil*/
     }
     for (i=0;i<=36;i++)
     {
@@ -467,26 +489,29 @@ void leerFichero(tipoNumero lista[], int sitio)  /*Lee los datos del fichero ele
 }
 
 /*prototipo*/
+void ocultarCursor(bool);   /*no funciona para version movil*/
 void printMenu(int,int,string[],int,int);
 
 int elegirOpcion(int numOpc,string m[],int cabecera,int casino)  /*Cambia de opción dependiendo de si pulsamos la tecla arriba o abajo, devuelve la opción al presionar ENTER*/
 {
-    int opc,tecla;
+    int opc;
+    char tecla;
 
     opc=1;
     tecla=0;
+    ocultarCursor(true);    /*no funciona para version movil*/
     while (tecla!=13)       /*13 es el codigo ASCII para la tecla ENTER*/
     {
         printMenu(opc,numOpc,m,cabecera,casino);
         tecla=getch();
-        if (tecla==72)           /*72 es el codigo ASCII para la tecla de direccion arriba*/
+        if (tecla==72 || tecla=='w')           /*72 es el codigo ASCII para la tecla de direccion arriba*/
         {
             if (opc-1<1)
                 opc=numOpc;
             else
                 opc=opc-1;
         }
-        if (tecla==80)           /*80 es el codigo ASCII para la tecla de direccion abajo*/
+        if (tecla==80 || tecla=='s')           /*80 es el codigo ASCII para la tecla de direccion abajo*/
         {
             if (opc+1>numOpc)
                 opc=opc-(numOpc-1);
@@ -494,8 +519,13 @@ int elegirOpcion(int numOpc,string m[],int cabecera,int casino)  /*Cambia de opc
                 opc=opc+1;
         }
     }
+    ocultarCursor(false);     /*no funciona para version movil*/
     return opc;
 }
+
+/*prototipo*/
+void ocultarCursor(bool);    /*no funciona para version movil*/
+//void borrarPantalla();
 
 int pedirClave() /*pide una contraseña y en caso de ser erronea vuelve a pedirla*/
 {
@@ -508,9 +538,10 @@ int pedirClave() /*pide una contraseña y en caso de ser erronea vuelve a pedirl
         while (clave!=55555 && i<3)
         {
             system("cls");
-            textcolor(RED);
+            //borrarPantalla();
+            textcolor(RED);                /*no funciona en version movil*/
             cout<<"Clave incorrecta, no intente robar el programa!!"<<endl;
-            textcolor(WHITE);
+            textcolor(WHITE);           /*no funciona en version movil*/
             cout<<"Te quedan "<<3-i<<" intentos: ";
             cin>>clave;
             i++;
@@ -520,8 +551,34 @@ int pedirClave() /*pide una contraseña y en caso de ser erronea vuelve a pedirl
     else
     {
         system("cls");
+        //borrarPantalla();
         cout<<"No te quedan mas intentos, el programa va a cerrarse"<<endl<<endl;
+        ocultarCursor(true);      /*no funciona para version movil*/
         system("PAUSE");
+        ocultarCursor(false);    /*no funciona para version movil*/
         return 1;
     }
+}
+
+void ocultarCursor(bool c)  /*oculta o hace visible el cursor de la consola*/  /*no funciona para version movil*/
+{
+    HANDLE hCon;   /*El handle es una especie de identificador de las ventanas de modo que hCon es una variable de tipo HANDLE*/
+    hCon=GetStdHandle(STD_OUTPUT_HANDLE);  /*Aqui se asigna el handle de la consola a la variable*/
+
+    CONSOLE_CURSOR_INFO cci;   /*cci es una variable de tipo informacion de cursor*/
+    cci.dwSize=3;  /*tamaño del cursor (1-100)*/        /*dwSize y bVisivle son campos de cci*/
+    if (c)
+        cci.bVisible=FALSE;  /*visibilidad del cursor*/
+    else
+        cci.bVisible=TRUE;
+    SetConsoleCursorInfo(hCon,&cci);      /*Esta funcion es la encargada de cambiar los datos del cursor (libreria windows.h)*/
+}
+
+void borrarPantalla()  /*Cambia cualquier cosa que estuviera imprimida por caracteres espacio*/ /*Para borrar en la version movil*/
+{
+    int i;
+    gotoxy(0,0);
+    for(i=0;i<30;i++)
+        cout<<"                                                                              "<<endl;
+    gotoxy(0,0);
 }
